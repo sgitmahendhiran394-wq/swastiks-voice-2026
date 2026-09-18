@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SignInScreen } from "@/components/auth/SignInScreen";
 
-const TITLE = "Swastiks Engineers' Day 2026 — Employee Feedback";
-const DESC = "Your Experience. Your Voice. Your Ideas. Share your Engineers' Day 2026 feedback with Swastiks.";
+const TITLE = "Sign in — Swastiks Engineers' Day 2026";
+const DESC = "Continue with your Swastiks company account to share your Engineers' Day 2026 feedback.";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: TITLE },
