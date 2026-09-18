@@ -14,13 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_allowlist: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          active: boolean
+          created_at: string
+          event_name: string
+          event_year: number
+          id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          event_name: string
+          event_year: number
+          id?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          event_name?: string
+          event_year?: number
+          id?: string
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          department: string | null
+          employee_email: string
+          employee_id: string | null
+          employee_name: string
+          event_id: string
+          id: string
+          q1: number
+          q10: string
+          q2: number
+          q3: number
+          q4: number
+          q5: number
+          q6: number
+          q7: number
+          q8: number
+          q9: string
+          submitted_at: string
+          user_id: string
+        }
+        Insert: {
+          department?: string | null
+          employee_email: string
+          employee_id?: string | null
+          employee_name: string
+          event_id: string
+          id?: string
+          q1: number
+          q10: string
+          q2: number
+          q3: number
+          q4: number
+          q5: number
+          q6: number
+          q7: number
+          q8: number
+          q9: string
+          submitted_at?: string
+          user_id: string
+        }
+        Update: {
+          department?: string | null
+          employee_email?: string
+          employee_id?: string | null
+          employee_name?: string
+          event_id?: string
+          id?: string
+          q1?: number
+          q10?: string
+          q2?: number
+          q3?: number
+          q4?: number
+          q5?: number
+          q6?: number
+          q7?: number
+          q8?: number
+          q9?: string
+          submitted_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
