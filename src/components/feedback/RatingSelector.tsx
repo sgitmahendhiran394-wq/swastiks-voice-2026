@@ -11,11 +11,7 @@ type Props = {
 
 export function RatingSelector({ labels, value, onChange }: Props) {
   return (
-    <div
-      role="radiogroup"
-      aria-label="Rating"
-      className="grid grid-cols-1 gap-3 sm:grid-cols-5"
-    >
+    <div role="radiogroup" aria-label="Rating" className="grid grid-cols-1 gap-3 sm:grid-cols-5">
       {labels.map((l) => {
         const selected = value === l.value;
         return (

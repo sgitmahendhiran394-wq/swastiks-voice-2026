@@ -2,7 +2,14 @@ import { useMemo } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-type Particle = { x: number; y: number; size: number; delay: number; duration: number; color: "gold" | "red" | "electric" };
+type Particle = {
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  duration: number;
+  color: "gold" | "red" | "electric";
+};
 
 function seeded(seed: number) {
   let s = seed;
@@ -16,7 +23,15 @@ function seeded(seed: number) {
  * Engineering-inspired ambient background: circuit grid, glow, floating
  * particles, and a slow scanning line. Purely decorative (aria-hidden).
  */
-export function Backdrop({ className, particles = 18, dense = false }: { className?: string; particles?: number; dense?: boolean }) {
+export function Backdrop({
+  className,
+  particles = 18,
+  dense = false,
+}: {
+  className?: string;
+  particles?: number;
+  dense?: boolean;
+}) {
   const reduce = useReducedMotion();
   const dots = useMemo<Particle[]>(() => {
     const rnd = seeded(42);
@@ -32,7 +47,10 @@ export function Backdrop({ className, particles = 18, dense = false }: { classNa
   }, [particles]);
 
   return (
-    <div aria-hidden className={cn("pointer-events-none fixed inset-0 -z-10 overflow-hidden", className)}>
+    <div
+      aria-hidden
+      className={cn("pointer-events-none fixed inset-0 -z-10 overflow-hidden", className)}
+    >
       <div className={cn("absolute inset-0 circuit-grid", dense && "opacity-80")} />
       {/* Corner glows */}
       <div className="absolute -left-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-electric/20 blur-[120px]" />

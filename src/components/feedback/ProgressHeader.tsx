@@ -5,9 +5,12 @@ import { cn } from "@/lib/utils";
 export function ProgressHeader({ step, answers }: { step: number; answers: Answers }) {
   const total = QUESTIONS.length;
   const current = Math.min(step + 1, total);
-  const pct = Math.round((Object.keys(answers).filter((k) =>
-    QUESTIONS.some((q) => q.id === k && isAnswered(q, answers)),
-  ).length / total) * 100);
+  const pct = Math.round(
+    (Object.keys(answers).filter((k) => QUESTIONS.some((q) => q.id === k && isAnswered(q, answers)))
+      .length /
+      total) *
+      100,
+  );
 
   return (
     <div className="w-full">

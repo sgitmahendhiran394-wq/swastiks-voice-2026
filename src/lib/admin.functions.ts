@@ -20,17 +20,35 @@ export type FeedbackRow = {
   submitted_at: string;
 };
 
-/** Admin-only listing. RLS (is_admin) already restricts the rows returned. */
-export const getAdminFeedback = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase } = context;
+export const getAdminFeedback = createServerFn({ method: "POST" })
+  .validator((d: { token?: string }) => d)
+  .handler(async ({ data }) => {
+    const { token } = data;
+    if (!token) throw new Error("No token provided");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: claims, error: claimsError } = await supabaseAdmin.auth.getClaims(token);
+    if (claimsError || !claims?.claims) throw new Error("Invalid token");
+
+    // Use a fresh client scoped to this user
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env["SUPABASE_URL"]!,
+      process.env["SUPABASE_PUBLISHABLE_KEY"]!,
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+        auth: { persistSession: false },
+      },
+    );
 
     const { data: isAdmin, error: adminError } = await supabase.rpc("is_admin");
     if (adminError) throw new Error(adminError.message);
-    if (isAdmin !== true) return { isAdmin: false as const, rows: [] as FeedbackRow[], event: null };
+    if (isAdmin !== true)
+      return { isAdmin: false as const, rows: [] as FeedbackRow[], event: null };
 
-    const { data: event } = await supabase
+    const { data: event } = await supabaseAdmin
       .from("events")
       .select("id, event_name, event_year")
       .eq("active", true)
@@ -38,7 +56,7 @@ export const getAdminFeedback = createServerFn({ method: "GET" })
       .limit(1)
       .maybeSingle();
 
-    const { data, error } = await supabase
+    const { data: feedbackData, error } = await supabaseAdmin
       .from("feedback")
       .select(
         "id, employee_id, employee_name, employee_email, department, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, submitted_at",
@@ -46,5 +64,5 @@ export const getAdminFeedback = createServerFn({ method: "GET" })
       .order("submitted_at", { ascending: false });
     if (error) throw new Error(error.message);
 
-    return { isAdmin: true as const, rows: (data ?? []) as FeedbackRow[], event };
+    return { isAdmin: true as const, rows: (feedbackData ?? []) as FeedbackRow[], event };
   });

@@ -1,11 +1,25 @@
 import { cn } from "@/lib/utils";
 
 /** Swastiks wordmark + Engineers' Day lockup. */
-export function BrandLockup({ size = "md", className, align = "center" }: { size?: "sm" | "md" | "lg"; className?: string; align?: "center" | "left" }) {
+export function BrandLockup({
+  size = "md",
+  className,
+  align = "center",
+}: {
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  align?: "center" | "left";
+}) {
   const isLg = size === "lg";
   const isSm = size === "sm";
   return (
-    <div className={cn("flex flex-col", align === "center" ? "items-center text-center" : "items-start text-left", className)}>
+    <div
+      className={cn(
+        "flex flex-col",
+        align === "center" ? "items-center text-center" : "items-start text-left",
+        className,
+      )}
+    >
       <div className="flex items-center gap-3">
         <Emblem className={cn(isLg ? "h-12 w-12" : isSm ? "h-7 w-7" : "h-9 w-9")} />
         <span
@@ -18,7 +32,12 @@ export function BrandLockup({ size = "md", className, align = "center" }: { size
         </span>
       </div>
       {!isSm && (
-        <div className={cn("mt-1 h-px bg-gradient-to-r from-transparent via-gold to-transparent", isLg ? "w-64" : "w-40")} />
+        <div
+          className={cn(
+            "mt-1 h-px bg-gradient-to-r from-transparent via-gold to-transparent",
+            isLg ? "w-64" : "w-40",
+          )}
+        />
       )}
     </div>
   );

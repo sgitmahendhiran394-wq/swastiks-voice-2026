@@ -120,7 +120,8 @@ export const QUESTIONS: Question[] = [
     id: "q10",
     index: 10,
     type: "text",
-    title: "If you could improve one thing or add something to our next celebration, what would it be?",
+    title:
+      "If you could improve one thing or add something to our next celebration, what would it be?",
     short: "Improvement Idea",
     placeholder: "Your idea could become our next activity...",
     maxLength: TEXT_MAX,

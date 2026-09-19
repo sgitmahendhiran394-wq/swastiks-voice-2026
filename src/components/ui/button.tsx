@@ -15,8 +15,10 @@ const buttonVariants = cva(
         /* Solid gold button — submit / celebrate */
         gold: "bg-gold text-accent-foreground shadow-glow-gold-soft hover:bg-gold-light hover:shadow-glow-gold hover:scale-[1.03] active:scale-[0.98] font-display tracking-[0.18em] uppercase",
         /* Translucent glass button — secondary / back */
-        glass: "glass text-foreground hover:border-gold/60 hover:bg-glass/50 font-display tracking-[0.18em] uppercase",
-        success: "bg-success text-primary-foreground hover:bg-success-light shadow-glow-green font-display tracking-[0.18em] uppercase",
+        glass:
+          "glass text-foreground hover:border-gold/60 hover:bg-glass/50 font-display tracking-[0.18em] uppercase",
+        success:
+          "bg-success text-primary-foreground hover:bg-success-light shadow-glow-green font-display tracking-[0.18em] uppercase",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-transparent shadow-sm hover:bg-glass hover:text-foreground",

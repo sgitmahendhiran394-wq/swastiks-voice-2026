@@ -1,43 +1,53 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowRight, Building2, ShieldCheck } from "lucide-react";
-import { lovable } from "@/integrations/lovable/index";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Backdrop } from "@/components/brand/Backdrop";
 import { BrandLockup } from "@/components/brand/Logo";
 import { Mascot } from "@/components/brand/Mascot";
 
-/**
- * Company identity screen: "Continue with Company Account".
- * No manual forms — identity comes from Google Workspace.
- */
 export function SignInScreen() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, login } = useAuth();
   const navigate = useNavigate();
   const reduce = useReducedMotion();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
+  const [department, setDepartment] = useState("");
+
   useEffect(() => {
     if (!loading && isAuthenticated) navigate({ to: "/feedback", replace: true });
   }, [loading, isAuthenticated, navigate]);
 
-  async function signIn() {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
     setBusy(true);
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-      extraParams: { prompt: "select_account" },
-    });
-    if (result.error) {
-      setError("Unable to verify your company account.");
+
+    if (!name.trim() || !email.trim()) {
+      setError("Please fill out your name and email.");
       setBusy(false);
       return;
     }
-    if (result.redirected) return;
-    navigate({ to: "/feedback", replace: true });
+
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address.");
+      setBusy(false);
+      return;
+    }
+
+    try {
+      login({ name, email, employeeId: employeeId || null, department: department || null });
+      navigate({ to: "/feedback", replace: true });
+    } catch {
+      setError("An unexpected error occurred.");
+      setBusy(false);
+    }
   }
 
   const fade = (delay: number) => ({
@@ -49,8 +59,18 @@ export function SignInScreen() {
   return (
     <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
       <Backdrop />
-      <Mascot kind="lion" className="absolute -left-10 bottom-0 hidden w-[22rem] opacity-30 lg:block xl:w-[28rem]" duration={11} />
-      <Mascot kind="parrot" className="absolute -right-6 top-10 hidden w-56 opacity-25 lg:block xl:w-64" duration={8} delay={1} flip />
+      <Mascot
+        kind="lion"
+        className="absolute -left-10 bottom-0 hidden w-[22rem] opacity-30 lg:block xl:w-[28rem]"
+        duration={11}
+      />
+      <Mascot
+        kind="parrot"
+        className="absolute -right-6 top-10 hidden w-56 opacity-25 lg:block xl:w-64"
+        duration={8}
+        delay={1}
+        flip
+      />
 
       <motion.section
         {...fade(0)}
@@ -67,28 +87,96 @@ export function SignInScreen() {
           Your Voice. <span className="text-gold-gradient">Your Ideas.</span>
         </motion.h1>
         <motion.p {...fade(0.3)} className="mt-4 text-sm text-muted-foreground">
-          Sign in once with your company account — no forms, no passwords. We'll pick up your name automatically.
+          Please enter your details below to begin the feedback survey.
         </motion.p>
 
-        <motion.div {...fade(0.4)} className="mt-8">
-          <Button variant="hero" size="xl" className="w-full" onClick={signIn} disabled={busy || loading}>
-            <Building2 />
-            {busy ? "Connecting…" : "Continue with Company Account"}
+        <motion.form {...fade(0.4)} className="mt-8 space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-foreground">
+              Full Name *
+            </label>
+            <input
+              id="name"
+              type="text"
+              required
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={busy || loading}
+            />
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-foreground">
+              Company Email *
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={busy || loading}
+            />
+          </div>
+          <div>
+            <label htmlFor="empId" className="block text-sm font-medium text-foreground">
+              Employee ID (Optional)
+            </label>
+            <input
+              id="empId"
+              type="text"
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              value={employeeId}
+              onChange={(e) => setEmployeeId(e.target.value)}
+              disabled={busy || loading}
+            />
+          </div>
+          <div>
+            <label htmlFor="department" className="block text-sm font-medium text-foreground">
+              Department (Optional)
+            </label>
+            <input
+              id="department"
+              type="text"
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              disabled={busy || loading}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="hero"
+            size="xl"
+            className="mt-6 w-full"
+            disabled={busy || loading}
+          >
+            {busy ? "Starting…" : "Start Feedback"}
             {!busy && <ArrowRight />}
           </Button>
           {error && (
             <div className="mt-4 rounded-xl border border-red/40 bg-red/10 px-4 py-3 text-sm">
               <p className="font-medium text-foreground">{error}</p>
-              <button onClick={signIn} className="mt-1 text-xs font-semibold uppercase tracking-widest text-gold hover:underline">
-                Try again
-              </button>
             </div>
           )}
-        </motion.div>
+        </motion.form>
 
-        <motion.div {...fade(0.5)} className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 text-success-light" />
-          Secure company sign-in · One response per employee
+        <motion.div
+          {...fade(0.5)}
+          className="mt-6 flex items-center justify-between text-xs text-muted-foreground"
+        >
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="size-3.5 text-success-light" />
+            One response per employee
+          </div>
+          <button
+            onClick={() => navigate({ to: "/admin-login" })}
+            className="hover:text-foreground transition-colors"
+          >
+            Admin Login
+          </button>
         </motion.div>
       </motion.section>
     </main>

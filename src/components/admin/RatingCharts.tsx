@@ -14,7 +14,9 @@ import {
   departmentSummary,
   questionAverages,
   ratingDistribution,
+  distributionByQuestion,
 } from "@/lib/admin-analytics";
+import { RATING_KEYS } from "@/lib/questions";
 
 const AXIS = { stroke: "rgba(255,255,255,0.45)", fontSize: 12 };
 const TOOLTIP_STYLE = {
@@ -42,7 +44,19 @@ export function RatingCharts({ rows }: { rows: FeedbackRow[] }) {
   const dist = ratingDistribution(rows);
   const qAvg = questionAverages(rows);
   const depts = departmentSummary(rows);
-  const barColors = ["#22C55E", "#4ADE80", "#D4AF37", "#E53935", "#C62828"];
+  const qDist = distributionByQuestion(rows);
+  const barColors = ["#22C55E", "#4ADE80", "#D4AF37", "#E53935", "#C62828"]; // 5,4,3,2,1 star colors
+
+  // For stacked bar chart, we want questions on X axis, and star counts stacked on Y axis
+  const stackedData = RATING_KEYS.map((k) => {
+    const qData: Record<string, string | number> = { question: k.toUpperCase() };
+    qDist.forEach((d) => {
+      // mapping "5 Star" back to numerical key for coloring
+      const star = parseInt(d["rating"] as string);
+      qData[`star_${star}`] = (d[k.toUpperCase()] as number | string) ?? 0;
+    });
+    return qData;
+  });
 
   return (
     <div className="grid gap-4 xl:grid-cols-2">
@@ -57,6 +71,21 @@ export function RatingCharts({ rows }: { rows: FeedbackRow[] }) {
               <Cell key={i} fill={barColors[i]} />
             ))}
           </Bar>
+        </BarChart>
+      </Panel>
+
+      <Panel title="1–5 Star Rating Breakdown per Question">
+        <BarChart data={stackedData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+          <XAxis dataKey="question" tick={AXIS} />
+          <YAxis tick={AXIS} allowDecimals={false} />
+          <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.05)" }} />
+          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Bar dataKey="star_5" name="5 ★" stackId="a" fill="#22C55E" />
+          <Bar dataKey="star_4" name="4 ★" stackId="a" fill="#4ADE80" />
+          <Bar dataKey="star_3" name="3 ★" stackId="a" fill="#D4AF37" />
+          <Bar dataKey="star_2" name="2 ★" stackId="a" fill="#E53935" />
+          <Bar dataKey="star_1" name="1 ★" stackId="a" fill="#C62828" radius={[8, 8, 0, 0]} />
         </BarChart>
       </Panel>
 
@@ -79,20 +108,6 @@ export function RatingCharts({ rows }: { rows: FeedbackRow[] }) {
           <Legend wrapperStyle={{ fontSize: 12 }} />
           <Bar dataKey="responses" name="Responses" fill="#D4AF37" radius={[8, 8, 0, 0]} />
           <Bar dataKey="average" name="Avg /5" fill="#22C55E" radius={[8, 8, 0, 0]} />
-        </BarChart>
-      </Panel>
-
-      <Panel title="Rating Distribution (5 → 1)">
-        <BarChart data={dist} layout="vertical">
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-          <XAxis type="number" tick={AXIS} allowDecimals={false} />
-          <YAxis dataKey="rating" type="category" tick={AXIS} width={60} />
-          <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.05)" }} />
-          <Bar dataKey="count" radius={[0, 8, 8, 0]}>
-            {dist.map((_, i) => (
-              <Cell key={i} fill={barColors[i]} />
-            ))}
-          </Bar>
         </BarChart>
       </Panel>
     </div>

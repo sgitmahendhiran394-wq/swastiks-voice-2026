@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -42,8 +42,8 @@ function FeedbackPage() {
   const submit = useServerFn(submitFeedback);
 
   const statusQuery = useQuery({
-    queryKey: ["feedback-status"],
-    queryFn: () => fetchStatus({}),
+    queryKey: ["feedback-status", employee?.email],
+    queryFn: () => fetchStatus({ data: { email: employee?.email } }),
   });
 
   const [stage, setStage] = useState<Stage>("welcome");
@@ -95,6 +95,7 @@ function FeedbackPage() {
       const result = await submit({
         data: {
           eventId: statusQuery.data.event.id,
+          employeeEmail: employee.email,
           employeeName: employee.name,
           employeeId: employee.employeeId,
           department: employee.department,
@@ -110,10 +111,16 @@ function FeedbackPage() {
           q10: String(answers.q10 ?? "").trim(),
         },
       });
+
+      if ("configError" in result && result.configError) {
+        setError(result.configError);
+        setSubmitting(false);
+        return;
+      }
+
       clearDraft(employee.email);
       await statusQuery.refetch();
       setStage("done");
-      void result;
     } catch {
       setError("Something went wrong while submitting your feedback.");
     } finally {
@@ -122,6 +129,19 @@ function FeedbackPage() {
   }
 
   const loading = authLoading || statusQuery.isLoading;
+
+  if (!authLoading && !employee) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4 text-center">
+        <div>
+          <p className="text-foreground">Please enter your details first.</p>
+          <Button variant="hero" className="mt-4" onClick={() => (window.location.href = "/")}>
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="relative min-h-screen px-4 py-10">
@@ -139,9 +159,23 @@ function FeedbackPage() {
                 Loading your feedback experience...
               </p>
             </div>
+          ) : statusQuery.data?.configError ? (
+            <div className="py-12 text-center">
+              <p className="text-sm font-semibold text-red-bright">
+                {statusQuery.data.configError}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Please configure this in your .env file and restart the server.
+              </p>
+              <Button variant="gold" className="mt-5" onClick={() => statusQuery.refetch()}>
+                Try again
+              </Button>
+            </div>
           ) : statusQuery.isError ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-red-bright">Unable to verify your company account.</p>
+              <p className="text-sm text-red-bright">
+                {statusQuery.error?.message || "Unable to verify your company account."}
+              </p>
               <Button variant="gold" className="mt-5" onClick={() => statusQuery.refetch()}>
                 Try again
               </Button>

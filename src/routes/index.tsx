@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SignInScreen } from "@/components/auth/SignInScreen";
 
 const TITLE = "Swastiks Engineers' Day 2026 — Employee Feedback";
-const DESC = "Your Experience. Your Voice. Your Ideas. Share your Engineers' Day 2026 feedback with Swastiks.";
+const DESC =
+  "Your Experience. Your Voice. Your Ideas. Share your Engineers' Day 2026 feedback with Swastiks.";
 
 export const Route = createFileRoute("/")({
   head: () => ({

@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import lion from "@/assets/mascots/lion.png";
-import parrot from "@/assets/mascots/parrot.png";
+import parrot from "@/assets/mascots/kili_thinking.png";
 import { cn } from "@/lib/utils";
 
 type MascotProps = {
@@ -24,7 +24,14 @@ const ALT = {
  * Subtle floating mascot. Swap the PNGs in src/assets/mascots to use the
  * official company artwork — no code changes needed.
  */
-export function Mascot({ kind, className, amplitude = 12, duration = 7, delay = 0, flip }: MascotProps) {
+export function Mascot({
+  kind,
+  className,
+  amplitude = 12,
+  duration = 7,
+  delay = 0,
+  flip,
+}: MascotProps) {
   const reduce = useReducedMotion();
   return (
     <motion.img
@@ -34,7 +41,11 @@ export function Mascot({ kind, className, amplitude = 12, duration = 7, delay = 
       height={1024}
       loading="lazy"
       draggable={false}
-      className={cn("pointer-events-none select-none object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.45)]", flip && "-scale-x-100", className)}
+      className={cn(
+        "pointer-events-none select-none object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.45)]",
+        flip && "-scale-x-100",
+        className,
+      )}
       initial={{ opacity: 0, y: 20 }}
       animate={
         reduce
@@ -44,7 +55,11 @@ export function Mascot({ kind, className, amplitude = 12, duration = 7, delay = 
       transition={
         reduce
           ? { duration: 0.4 }
-          : { opacity: { duration: 0.8, delay }, y: { duration, repeat: Infinity, ease: "easeInOut", delay }, rotate: { duration, repeat: Infinity, ease: "easeInOut", delay } }
+          : {
+              opacity: { duration: 0.8, delay },
+              y: { duration, repeat: Infinity, ease: "easeInOut", delay },
+              rotate: { duration, repeat: Infinity, ease: "easeInOut", delay },
+            }
       }
     />
   );

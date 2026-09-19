@@ -13,7 +13,11 @@ type Props = {
 
 export function ReviewScreen({ answers, submitting, error, onEdit, onSubmit }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <p className="eyebrow">Almost done</p>
       <h2 className="mt-3 font-display text-2xl font-bold text-foreground sm:text-3xl">
         Review your feedback
