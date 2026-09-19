@@ -2,9 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Loader2, Download, TableProperties, Sheet, LogOut, Eye } from "lucide-react";
+import { Loader2, Download, TableProperties, Sheet, LogOut, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getAdminFeedback, type FeedbackRow } from "@/lib/admin.functions";
+import { getAdminFeedback, deleteFeedback, type FeedbackRow } from "@/lib/admin.functions";
 import { AnalyticsCards } from "@/components/admin/AnalyticsCards";
 import { RatingCharts } from "@/components/admin/RatingCharts";
 import { exportToExcel } from "@/lib/export-report";
@@ -28,9 +28,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminDashboard() {
   const fetchFeedback = useServerFn(getAdminFeedback);
+  const removeFeedback = useServerFn(deleteFeedback);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState<FeedbackRow | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   const query = useQuery({
     queryKey: ["admin-feedback"],
@@ -48,22 +50,9 @@ function AdminDashboard() {
 
     const channel = supabase
       .channel("admin-feedback-live")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "feedback" },
-        (payload) => {
-          queryClient.setQueryData(
-            ["admin-feedback"],
-            (oldData: { isAdmin: boolean; rows: FeedbackRow[]; event: unknown } | undefined) => {
-              if (!oldData || !oldData.rows) return oldData;
-              return {
-                ...oldData,
-                rows: [payload.new, ...oldData.rows],
-              };
-            },
-          );
-        },
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "feedback" }, (payload) => {
+        queryClient.invalidateQueries({ queryKey: ["admin-feedback"] });
+      })
       .subscribe();
 
     return () => {
@@ -74,6 +63,34 @@ function AdminDashboard() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/admin-login", replace: true });
+  };
+
+  const handleDelete = async (id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this submission? The employee will be able to submit again.",
+      )
+    )
+      return;
+
+    setIsDeleting(id);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      await removeFeedback({ data: { token: session?.access_token ?? "", feedbackId: id } });
+      queryClient.setQueryData(["admin-feedback"], (oldData: any) => {
+        if (!oldData || !oldData.rows) return oldData;
+        return {
+          ...oldData,
+          rows: oldData.rows.filter((r: FeedbackRow) => r.id !== id),
+        };
+      });
+    } catch (err) {
+      alert("Failed to delete submission.");
+    } finally {
+      setIsDeleting(null);
+    }
   };
 
   if (query.isLoading) {
@@ -197,6 +214,19 @@ function AdminDashboard() {
                         <Button variant="ghost" size="sm" onClick={() => setSelectedRow(row)}>
                           <Eye className="h-4 w-4 mr-2" />
                           View
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-400 hover:bg-red-500/10 ml-2"
+                          onClick={() => handleDelete(row.id)}
+                          disabled={isDeleting === row.id}
+                        >
+                          {isDeleting === row.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
                         </Button>
                       </td>
                     </tr>

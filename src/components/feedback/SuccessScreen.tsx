@@ -60,6 +60,20 @@ export function SuccessScreen({
         <Mascot kind="lion" className="h-28 w-28 sm:h-36 sm:w-36" />
         <Mascot kind="parrot" className="h-24 w-24 sm:h-32 sm:w-32" delay={0.3} flip />
       </div>
+
+      {alreadySubmitted && (
+        <div className="relative mt-12 border-t border-glass-border pt-6">
+          <p className="text-sm text-muted-foreground">
+            Made a mistake?{" "}
+            <a
+              href="mailto:sgitmahendhiran394@gmail.com?subject=Request%20Feedback%20Reset"
+              className="text-gold hover:underline font-medium transition-colors"
+            >
+              Request a reset from the Admin
+            </a>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -66,3 +66,36 @@ export const getAdminFeedback = createServerFn({ method: "POST" })
 
     return { isAdmin: true as const, rows: (feedbackData ?? []) as FeedbackRow[], event };
   });
+
+export const deleteFeedback = createServerFn({ method: "POST" })
+  .validator((d: { token?: string; feedbackId: string }) => d)
+  .handler(async ({ data }) => {
+    const { token, feedbackId } = data;
+    if (!token) throw new Error("No token provided");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: claims, error: claimsError } = await supabaseAdmin.auth.getClaims(token);
+    if (claimsError || !claims?.claims) throw new Error("Invalid token");
+
+    // Use a fresh client scoped to this user
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env["SUPABASE_URL"]!,
+      process.env["SUPABASE_PUBLISHABLE_KEY"]!,
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+        auth: { persistSession: false },
+      },
+    );
+
+    const { data: isAdmin, error: adminError } = await supabase.rpc("is_admin");
+    if (adminError || isAdmin !== true) throw new Error("Unauthorized");
+
+    const { error } = await supabaseAdmin.from("feedback").delete().eq("id", feedbackId);
+
+    if (error) throw new Error(error.message);
+
+    return { success: true };
+  });
