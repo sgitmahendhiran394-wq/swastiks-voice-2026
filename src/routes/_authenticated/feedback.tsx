@@ -143,9 +143,11 @@ function FeedbackPage() {
     );
   }
 
+  const showVideo = stage === "done" || alreadySubmitted;
+
   return (
     <main className="relative min-h-screen px-4 py-10">
-      <Backdrop />
+      <Backdrop hideVideo={!showVideo} />
       <div className="mx-auto w-full max-w-3xl">
         <div className="flex justify-center">
           <BrandLockup size="sm" />

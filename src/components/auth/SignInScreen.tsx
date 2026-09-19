@@ -56,16 +56,16 @@ export function SignInScreen() {
   });
 
   return (
-    <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
+    <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-6">
       <Backdrop />
 
       <motion.section
         {...fade(0)}
-        className="glass relative w-full max-w-md rounded-3xl p-8 sm:p-10"
+        className="glass relative w-full max-w-md rounded-3xl p-6 sm:p-8"
       >
         <div className="absolute inset-x-10 -top-px h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <BrandLockup size="md" />
-        <motion.p {...fade(0.15)} className="eyebrow mt-8">
+        <motion.p {...fade(0.15)} className="eyebrow mt-4">
           Engineers' Day 2026
         </motion.p>
         <motion.h1 {...fade(0.22)} className="mt-2 text-3xl font-bold leading-tight sm:text-4xl">
@@ -73,11 +73,11 @@ export function SignInScreen() {
           <br />
           Your Voice. <span className="text-gold-gradient">Your Ideas.</span>
         </motion.h1>
-        <motion.p {...fade(0.3)} className="mt-4 text-sm text-muted-foreground">
+        <motion.p {...fade(0.3)} className="mt-3 text-sm text-muted-foreground">
           Please enter your details below to begin the feedback survey.
         </motion.p>
 
-        <motion.form {...fade(0.4)} className="mt-8 space-y-4" onSubmit={handleSubmit}>
+        <motion.form {...fade(0.4)} className="mt-6 space-y-3" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-foreground">
               Full Name *
@@ -86,7 +86,7 @@ export function SignInScreen() {
               id="name"
               type="text"
               required
-              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-black/50 px-4 py-2.5 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={busy || loading}
@@ -100,7 +100,7 @@ export function SignInScreen() {
               id="email"
               type="email"
               required
-              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-black/50 px-4 py-2.5 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={busy || loading}
@@ -113,7 +113,7 @@ export function SignInScreen() {
             <input
               id="empId"
               type="text"
-              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-black/50 px-4 py-2.5 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
               value={employeeId}
               onChange={(e) => setEmployeeId(e.target.value)}
               disabled={busy || loading}
@@ -126,7 +126,7 @@ export function SignInScreen() {
             <input
               id="department"
               type="text"
-              className="mt-1 block w-full rounded-xl border border-glass-border bg-glass-dark px-4 py-3 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="mt-1 block w-full rounded-xl border border-glass-border bg-black/50 px-4 py-2.5 text-sm text-foreground shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               disabled={busy || loading}
@@ -137,7 +137,7 @@ export function SignInScreen() {
             type="submit"
             variant="hero"
             size="xl"
-            className="mt-6 w-full"
+            className="mt-4 w-full"
             disabled={busy || loading}
           >
             {busy ? "Starting…" : "Start Feedback"}
