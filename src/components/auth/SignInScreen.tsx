@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Backdrop } from "@/components/brand/Backdrop";
 import { BrandLockup } from "@/components/brand/Logo";
-import { Mascot } from "@/components/brand/Mascot";
+import mascotVideo from "@/assets/mascots/lion_walk_parrot_fly_on_backgr.mp4";
 
 export function SignInScreen() {
   const { isAuthenticated, loading, login } = useAuth();
@@ -59,18 +59,16 @@ export function SignInScreen() {
   return (
     <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
       <Backdrop />
-      <Mascot
-        kind="lion"
-        className="absolute -left-10 bottom-0 w-48 opacity-20 sm:w-[22rem] sm:opacity-30 lg:-left-20 xl:w-[28rem] -z-10"
-        duration={11}
-      />
-      <Mascot
-        kind="parrot"
-        className="absolute -right-6 top-10 w-32 opacity-20 sm:w-56 sm:opacity-25 lg:-right-10 xl:w-64 -z-10"
-        duration={8}
-        delay={1}
-        flip
-      />
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-30 mix-blend-screen">
+        <video
+          src={mascotVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        />
+      </div>
 
       <motion.section
         {...fade(0)}
