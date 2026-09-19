@@ -56,7 +56,7 @@ export function AdminLoginScreen() {
 
   return (
     <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
-      <Backdrop />
+      <Backdrop dense hideVideo />
 
       <motion.section
         {...fade(0)}

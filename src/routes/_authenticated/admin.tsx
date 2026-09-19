@@ -132,7 +132,7 @@ function AdminDashboard() {
 
   return (
     <main className="relative min-h-screen px-4 py-10">
-      <Backdrop />
+      <Backdrop hideVideo />
       <div className="mx-auto w-full max-w-7xl">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <BrandLockup size="sm" />

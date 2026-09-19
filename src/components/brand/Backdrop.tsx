@@ -28,10 +28,12 @@ export function Backdrop({
   className,
   particles = 18,
   dense = false,
+  hideVideo = false,
 }: {
   className?: string;
   particles?: number;
   dense?: boolean;
+  hideVideo?: boolean;
 }) {
   const reduce = useReducedMotion();
   const dots = useMemo<Particle[]>(() => {
@@ -59,17 +61,19 @@ export function Backdrop({
       aria-hidden
       className={cn("pointer-events-none fixed inset-0 -z-10 overflow-hidden", className)}
     >
-      <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden opacity-60">
-        <video
-          ref={videoRef}
-          src={mascotVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="h-full w-full object-cover"
-        />
-      </div>
+      {!hideVideo && (
+        <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden opacity-60 hidden md:block">
+          <video
+            ref={videoRef}
+            src={mascotVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
       <div className={cn("absolute inset-0 circuit-grid -z-10", dense && "opacity-80")} />
       {/* Corner glows */}
       <div className="absolute -left-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-electric/20 blur-[120px]" />
