@@ -65,7 +65,11 @@ export function Backdrop({ className, particles = 18, dense = false }: { classNa
           style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
           initial={{ opacity: 0 }}
           animate={reduce ? { opacity: 0.5 } : { opacity: [0, 0.8, 0], y: [0, -40, -80] }}
-          transition={reduce ? undefined : { duration: p.duration, delay: p.delay, repeat: Infinity, ease: "easeInOut" }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { duration: p.duration, delay: p.delay, repeat: Infinity, ease: "easeInOut" }
+          }
         />
       ))}
     </div>
