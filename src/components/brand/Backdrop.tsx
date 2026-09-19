@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import mascotVideo from "@/assets/mascots/lion_walk_parrot_fly_on_backgr.mp4";
 
 type Particle = {
   x: number;
@@ -46,12 +47,30 @@ export function Backdrop({
     }));
   }, [particles]);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.4; // Slow down the video significantly
+    }
+  }, []);
+
   return (
     <div
       aria-hidden
       className={cn("pointer-events-none fixed inset-0 -z-10 overflow-hidden", className)}
     >
-      <div className={cn("absolute inset-0 circuit-grid", dense && "opacity-80")} />
+      <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden opacity-60">
+        <video
+          ref={videoRef}
+          src={mascotVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className={cn("absolute inset-0 circuit-grid -z-10", dense && "opacity-80")} />
       {/* Corner glows */}
       <div className="absolute -left-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-electric/20 blur-[120px]" />
       <div className="absolute -right-32 top-1/3 h-[26rem] w-[26rem] rounded-full bg-gold/10 blur-[120px]" />
