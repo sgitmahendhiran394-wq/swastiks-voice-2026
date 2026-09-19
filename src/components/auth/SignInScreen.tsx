@@ -61,12 +61,12 @@ export function SignInScreen() {
       <Backdrop />
       <Mascot
         kind="lion"
-        className="absolute -left-10 bottom-0 hidden w-[22rem] opacity-30 lg:block xl:w-[28rem]"
+        className="absolute -left-10 bottom-0 w-48 opacity-20 sm:w-[22rem] sm:opacity-30 lg:-left-20 xl:w-[28rem] -z-10"
         duration={11}
       />
       <Mascot
         kind="parrot"
-        className="absolute -right-6 top-10 hidden w-56 opacity-25 lg:block xl:w-64"
+        className="absolute -right-6 top-10 w-32 opacity-20 sm:w-56 sm:opacity-25 lg:-right-10 xl:w-64 -z-10"
         duration={8}
         delay={1}
         flip
