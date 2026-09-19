@@ -27,12 +27,11 @@ const ALT = {
 export function Mascot({
   kind,
   className,
-  amplitude = 12,
-  duration = 7,
+  amplitude = 15,
+  duration = 5,
   delay = 0,
   flip,
 }: MascotProps) {
-  const reduce = useReducedMotion();
   return (
     <motion.img
       src={SRC[kind]}
@@ -46,21 +45,19 @@ export function Mascot({
         flip && "-scale-x-100",
         className,
       )}
-      initial={{ opacity: 0, y: 20 }}
-      animate={
-        reduce
-          ? { opacity: 1, y: 0 }
-          : { opacity: 1, y: [0, -amplitude, 0], rotate: [0, flip ? -1.5 : 1.5, 0] }
-      }
-      transition={
-        reduce
-          ? { duration: 0.4 }
-          : {
-              opacity: { duration: 0.8, delay },
-              y: { duration, repeat: Infinity, ease: "easeInOut", delay },
-              rotate: { duration, repeat: Infinity, ease: "easeInOut", delay },
-            }
-      }
+      initial={{ opacity: 0, y: 30, scale: 0.9 }}
+      animate={{
+        opacity: 1,
+        y: [0, -amplitude, 0],
+        rotate: [0, flip ? -2 : 2, 0],
+        scale: 1,
+      }}
+      transition={{
+        opacity: { duration: 0.6, delay, ease: "easeOut" },
+        scale: { duration: 0.6, delay, ease: "easeOut" },
+        y: { duration, repeat: Infinity, ease: "easeInOut", delay: delay + 0.2 },
+        rotate: { duration, repeat: Infinity, ease: "easeInOut", delay: delay + 0.2 },
+      }}
     />
   );
 }
