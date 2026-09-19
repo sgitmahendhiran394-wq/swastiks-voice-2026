@@ -79,13 +79,16 @@ function AdminDashboard() {
         data: { session },
       } = await supabase.auth.getSession();
       await removeFeedback({ data: { token: session?.access_token ?? "", feedbackId: id } });
-      queryClient.setQueryData(["admin-feedback"], (oldData: any) => {
-        if (!oldData || !oldData.rows) return oldData;
-        return {
-          ...oldData,
-          rows: oldData.rows.filter((r: FeedbackRow) => r.id !== id),
-        };
-      });
+      queryClient.setQueryData(
+        ["admin-feedback"],
+        (oldData: { isAdmin: boolean; rows: FeedbackRow[]; event: unknown } | undefined) => {
+          if (!oldData || !oldData.rows) return oldData;
+          return {
+            ...oldData,
+            rows: oldData.rows.filter((r: FeedbackRow) => r.id !== id),
+          };
+        },
+      );
     } catch (err) {
       alert("Failed to delete submission.");
     } finally {
